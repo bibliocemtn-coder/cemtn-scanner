@@ -1,87 +1,355 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#55158D">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Biblioteca CEMTN">
-
-  <title>Biblioteca CEMTN</title>
-
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-biblioteca-cemtn-192.png">
-  <link rel="apple-touch-icon" href="./icon-biblioteca-cemtn-512.png">
-
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #3B0764, #5B21B6);
-      color: white;
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-    }
-
-    .box {
-      text-align: center;
-      padding: 30px;
-      max-width: 360px;
-    }
-
-    img {
-      width: 96px;
-      height: 96px;
-      border-radius: 24px;
-      box-shadow: 0 12px 30px #0004;
-      margin-bottom: 16px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 23px;
-    }
-
-    p {
-      margin: 8px 0 0;
-      opacity: .9;
-      font-size: 14px;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 22px;
-      padding: 12px 18px;
-      border-radius: 999px;
-      background: white;
-      color: #4C1D95;
-      text-decoration: none;
-      font-weight: 700;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5B21B6">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Biblioteca CEMTN">
+<title>Biblioteca CEMTN</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-biblioteca-cemtn-192.png">
+<link rel="apple-touch-icon" href="./icon-biblioteca-cemtn-512.png">
+<style>
+:root {
+  --principal:#5B21B6;
+  --escura:#3B0764;
+  --clara:#EDE9FE;
+  --fundo:#FAF5FF;
+  --texto:#2E1065;
+  --branco:#fff;
+  --borda:#ded7e8;
+  --sombra:0 12px 32px rgba(46,16,101,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--fundo);color:var(--texto)}
+body{padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+button,input,textarea{font:inherit}
+.topo{
+  position:sticky;top:0;z-index:10;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 12px;
+  background:color-mix(in srgb,var(--fundo) 90%,transparent);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid color-mix(in srgb,var(--principal) 14%,transparent);
+}
+.topo-inner{max-width:980px;margin:auto;display:flex;align-items:center;gap:12px}
+.appicon{width:42px;height:42px;border-radius:12px;box-shadow:0 4px 14px #0002}
+.brand strong{display:block;font-size:17px} .brand span{font-size:12px;opacity:.7}
+main{max-width:980px;margin:auto;padding:16px}
+.hero{
+  border-radius:24px;overflow:hidden;position:relative;min-height:250px;
+  background:linear-gradient(135deg,var(--escura),var(--principal));
+  box-shadow:var(--sombra);display:flex;align-items:flex-end;
+}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.62),rgba(0,0,0,.08) 70%)}
+.hero-copy{position:relative;z-index:2;padding:24px;color:#fff;max-width:620px}
+.hero-copy h1{margin:0 0 8px;font-size:30px;line-height:1.05} .hero-copy p{margin:0;line-height:1.45}
+.grid-links{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.link-card{
+  border:1px solid color-mix(in srgb,var(--principal) 18%,#ddd);
+  background:#fff;color:var(--texto);border-radius:18px;padding:17px;text-decoration:none;
+  box-shadow:0 7px 22px #0000000c;display:flex;gap:12px;align-items:center;
+}
+.link-card .ico{font-size:28px;min-width:34px;text-align:center}
+.link-card strong{display:block;margin-bottom:3px} .link-card small{opacity:.68;line-height:1.3}
+.insta-svg{width:28px;height:28px;display:block}
+.section{margin-top:22px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:10px}
+.section-head h2{margin:0;font-size:22px} .section-head p{margin:3px 0 0;font-size:13px;opacity:.68}
+.avisos{display:grid;gap:8px;margin-bottom:14px}
+.aviso{background:#fff;border-left:5px solid var(--principal);border-radius:12px;padding:11px 13px;box-shadow:0 4px 14px #0000000b}
+.busca{display:flex;gap:8px;margin-bottom:12px}
+.busca input{flex:1;border:1px solid var(--borda);border-radius:14px;padding:13px 14px;background:#fff;color:var(--texto)}
+.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;cursor:pointer}
+.btn-primary{background:var(--principal);color:#fff} .btn-soft{background:var(--clara);color:var(--texto)}
+.livros{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}
+.livro{background:#fff;border:1px solid color-mix(in srgb,var(--principal) 12%,#ddd);border-radius:18px;overflow:hidden;box-shadow:0 7px 18px #0000000a;cursor:pointer}
+.capa{aspect-ratio:2/3;background:linear-gradient(135deg,var(--clara),#fff);display:grid;place-items:center;overflow:hidden}
+.capa img{width:100%;height:100%;object-fit:cover} .semcapa{font-size:42px;opacity:.5}
+.livro-info{padding:11px} .livro-info strong{display:block;font-size:14px;line-height:1.25} .livro-info span{display:block;font-size:12px;opacity:.65;margin-top:4px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px} .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:var(--clara)}
+.vazio{padding:28px;text-align:center;background:#fff;border-radius:18px;opacity:.7}
+.modal{position:fixed;inset:0;z-index:50;background:#0008;display:none;align-items:flex-end;justify-content:center}
+.modal.aberto{display:flex}
+.sheet{width:100%;max-width:720px;max-height:92vh;overflow:auto;background:var(--fundo);border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom))}
+.sheet-top{display:flex;justify-content:flex-end} .x{border:0;background:#fff;border-radius:999px;width:38px;height:38px;font-size:20px}
+.detalhe-head{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:start}
+.detalhe-capa{width:120px;aspect-ratio:2/3;border-radius:14px;object-fit:cover;background:var(--clara)}
+.detalhe h2{margin:4px 0 5px} .detalhe p{margin:0 0 8px;opacity:.72}
+.comentarios{margin-top:16px;display:grid;gap:9px} .comentario{background:#fff;border-radius:14px;padding:12px}
+.comentario b{font-size:13px} .comentario span{font-size:11px;opacity:.6;margin-left:6px} .comentario p{margin:6px 0 0;opacity:.85}
+.form{margin-top:18px;background:#fff;border-radius:16px;padding:14px}
+.form h3{margin:0 0 10px;font-size:16px}
+.form input,.form textarea{width:100%;border:1px solid var(--borda);border-radius:12px;padding:11px;margin-bottom:8px;background:#fff}
+.form textarea{min-height:92px;resize:vertical}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.status{font-size:12px;margin-top:8px}
+.loading{padding:30px;text-align:center;opacity:.7}
+@media(max-width:650px){
+  .grid-links{grid-template-columns:1fr}
+  .hero{min-height:230px}
+  .hero-copy h1{font-size:27px}
+}
+</style>
 </head>
 <body>
-  <div class="box">
-    <img src="./icon-biblioteca-cemtn-192.png" alt="">
-    <h1>Biblioteca CEMTN</h1>
-    <p>Abrindo sua biblioteca…</p>
-    <a href="https://script.google.com/macros/s/AKfycbz1ltATqjcvV8HHtRjmbyXtT2BEH42v11NLYXEhy03x0BLDoWt8YbODK_WEAKedKHpMZA/exec">Abrir Biblioteca</a>
+<header class="topo">
+  <div class="topo-inner">
+    <img class="appicon" src="./icon-biblioteca-cemtn-192.png" alt="">
+    <div class="brand"><strong>Biblioteca CEMTN</strong><span>Seu portal de leitura</span></div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="hero">
+    <img id="heroBg" class="hero-bg" alt="">
+    <div class="hero-copy">
+      <h1 id="tituloTema">Biblioteca Digital CEMTN</h1>
+      <p>Leia, descubra, recomende e compartilhe suas experiências de leitura.</p>
+    </div>
+  </section>
+
+  <div class="grid-links">
+    <a class="link-card" href="#comunidade">
+      <div class="ico">💜</div>
+      <div><strong>Comunidade de Leitura</strong><small>Veja o acervo, recomendações e comentários.</small></div>
+    </a>
+    <a class="link-card" href="https://meclivros.mec.gov.br/" target="_blank" rel="noopener">
+      <div class="ico">📚</div>
+      <div><strong>MEC Livros</strong><small>Procure também na Biblioteca Digital do Brasil.</small></div>
+    </a>
+    <a class="link-card" href="https://www.instagram.com/bibliocemtn/" target="_blank" rel="noopener">
+      <div class="ico">
+        <svg class="insta-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="2"/>
+          <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+          <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div><strong>@bibliocemtn</strong><small>Novidades, projetos e avisos da biblioteca.</small></div>
+    </a>
   </div>
 
-  <script>
-    // Evita o iframe que estava sendo redirecionado para uma página de erro do Google Drive.
-    // O sistema passa a abrir diretamente no próprio contexto do app instalado.
-    window.addEventListener('load', function () {
-      setTimeout(function () {
-        window.location.replace("https://script.google.com/macros/s/AKfycbz1ltATqjcvV8HHtRjmbyXtT2BEH42v11NLYXEhy03x0BLDoWt8YbODK_WEAKedKHpMZA/exec");
-      }, 450);
-    });
-  </script>
+  <section id="comunidade" class="section">
+    <div class="section-head">
+      <div><h2>Comunidade de Leitura</h2><p>Pesquise por título ou autor/a.</p></div>
+    </div>
+    <div id="avisos" class="avisos"></div>
+    <div class="busca">
+      <input id="q" placeholder="Título ou autor/a" autocomplete="off">
+      <button class="btn btn-primary" id="buscar">Buscar</button>
+    </div>
+    <div id="livros" class="livros"><div class="loading">Carregando acervo…</div></div>
+  </section>
+</main>
+
+<div id="modal" class="modal">
+  <div class="sheet">
+    <div class="sheet-top"><button class="x" id="fechar">×</button></div>
+    <div id="detalhe" class="detalhe"></div>
+  </div>
+</div>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbz1ltATqjcvV8HHtRjmbyXtT2BEH42v11NLYXEhy03x0BLDoWt8YbODK_WEAKedKHpMZA/exec";
+let temaAtual = null;
+let obraAtual = null;
+
+function jsonp(params) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cemtn_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('Tempo de resposta excedido.'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      try { delete window[cb]; } catch(e) {}
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cb] = (data) => {
+      cleanup();
+      if (data && data.ok === false) reject(new Error(data.erro || 'Erro no sistema.'));
+      else resolve(data && Object.prototype.hasOwnProperty.call(data,'dados') ? data.dados : data);
+    };
+
+    const qs = new URLSearchParams({...params, callback:cb});
+    script.src = API + '?' + qs.toString();
+    script.onerror = () => { cleanup(); reject(new Error('Falha de conexão.')); };
+    document.head.appendChild(script);
+  });
+}
+
+function aplicarTema(t) {
+  if (!t) return;
+  temaAtual = t;
+  const r = document.documentElement.style;
+  r.setProperty('--principal', t.cor_principal || '#5B21B6');
+  r.setProperty('--escura', t.cor_escura || '#3B0764');
+  r.setProperty('--clara', t.cor_clara || '#EDE9FE');
+  r.setProperty('--fundo', t.cor_fundo || '#FAF5FF');
+  r.setProperty('--texto', t.cor_texto || '#2E1065');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', t.cor_principal || '#5B21B6');
+  const bg = document.getElementById('heroBg');
+  if (t.imagem_data_url) {
+    bg.src = t.imagem_data_url;
+    bg.style.display = 'block';
+  } else {
+    bg.style.display = 'none';
+  }
+  if (t.nome) document.getElementById('tituloTema').textContent = t.nome;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function capaHtml(url) {
+  return url
+    ? '<img src="' + esc(url) + '" alt="" loading="lazy">'
+    : '<div class="semcapa">📖</div>';
+}
+
+async function carregarTema() {
+  try { aplicarTema(await jsonp({api:'tema'})); } catch(e) {}
+}
+
+async function carregarAvisos() {
+  try {
+    const avisos = await jsonp({api:'avisos'});
+    const box = document.getElementById('avisos');
+    box.innerHTML = (avisos || []).slice(0,4).map(a =>
+      '<div class="aviso"><b>' + esc(a.titulo || 'Aviso') + '</b><div>' + esc(a.texto || '') + '</div></div>'
+    ).join('');
+  } catch(e) {}
+}
+
+async function carregarComunidade() {
+  const q = document.getElementById('q').value.trim();
+  const grid = document.getElementById('livros');
+  grid.innerHTML = '<div class="loading">Buscando…</div>';
+  try {
+    const xs = await jsonp({api:'comunidade', q});
+    if (!xs || !xs.length) {
+      grid.innerHTML = '<div class="vazio">Nenhuma obra encontrada.</div>';
+      return;
+    }
+    grid.innerHTML = xs.map(x => `
+      <article class="livro" data-id="${esc(x.id_obra_base)}">
+        <div class="capa">${capaHtml(x.capa_url)}</div>
+        <div class="livro-info">
+          <strong>${esc(x.titulo)}</strong>
+          <span>${esc(x.autor)}</span>
+          <div class="badges">
+            <span class="badge">${Number(x.disponiveis||0)} disponível(is)</span>
+            <span class="badge">❤ ${Number(x.recomendacoes||0)}</span>
+          </div>
+        </div>
+      </article>
+    `).join('');
+    grid.querySelectorAll('.livro').forEach(el => el.addEventListener('click', () => abrirDetalhe(el.dataset.id)));
+  } catch(e) {
+    grid.innerHTML = '<div class="vazio">Não foi possível carregar o acervo.<br>' + esc(e.message) + '</div>';
+  }
+}
+
+async function abrirDetalhe(id) {
+  const modal = document.getElementById('modal');
+  const box = document.getElementById('detalhe');
+  modal.classList.add('aberto');
+  box.innerHTML = '<div class="loading">Carregando…</div>';
+  try {
+    const x = await jsonp({api:'detalhes', id});
+    obraAtual = x;
+    const comments = (x.comentarios || []).map(c => `
+      <div class="comentario">
+        <b>${esc(c.nome || 'Leitor/a')}</b><span>${esc(c.turma || '')}</span>
+        <p>${esc(c.comentario || '')}</p>
+      </div>`).join('');
+    box.innerHTML = `
+      <div class="detalhe-head">
+        <div class="detalhe-capa capa">${capaHtml(x.capa_url)}</div>
+        <div>
+          <h2>${esc(x.titulo)}</h2>
+          <p>${esc(x.autor)}</p>
+          <div class="badges">
+            <span class="badge">${Number(x.total_disponiveis||0)} disponível(is)</span>
+            <span class="badge">❤ ${Number(x.recomendacoes||0)} recomendação(ões)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form">
+        <h3>Recomendar esta obra</h3>
+        <input id="alunoRec" placeholder="Seu ID CEMTN ou matrícula">
+        <button class="btn btn-primary" id="recomendar">❤ Recomendar</button>
+        <div id="statusRec" class="status"></div>
+      </div>
+
+      <div class="form">
+        <h3>Compartilhar impressão de leitura</h3>
+        <input id="alunoCom" placeholder="Seu ID CEMTN ou matrícula">
+        <textarea id="textoCom" maxlength="500" placeholder="Escreva seu comentário (até 500 caracteres)"></textarea>
+        <button class="btn btn-primary" id="enviarCom">Enviar para moderação</button>
+        <div id="statusCom" class="status"></div>
+      </div>
+
+      <div class="comentarios">
+        <h3>Comentários da comunidade</h3>
+        ${comments || '<div class="comentario">Ainda não há comentários aprovados.</div>'}
+      </div>
+    `;
+    document.getElementById('recomendar').onclick = recomendarAtual;
+    document.getElementById('enviarCom').onclick = comentarAtual;
+  } catch(e) {
+    box.innerHTML = '<div class="vazio">' + esc(e.message) + '</div>';
+  }
+}
+
+async function recomendarAtual() {
+  if (!obraAtual) return;
+  const aluno = document.getElementById('alunoRec').value.trim();
+  const st = document.getElementById('statusRec');
+  if (!aluno) { st.textContent = 'Informe seu ID CEMTN ou matrícula.'; return; }
+  st.textContent = 'Enviando…';
+  try {
+    const r = await jsonp({api:'recomendacao', aluno, id:obraAtual.id_obra_base, ativo:'1'});
+    st.textContent = 'Recomendação registrada. 💜';
+  } catch(e) { st.textContent = e.message; }
+}
+
+async function comentarAtual() {
+  if (!obraAtual) return;
+  const aluno = document.getElementById('alunoCom').value.trim();
+  const texto = document.getElementById('textoCom').value.trim();
+  const st = document.getElementById('statusCom');
+  if (!aluno || !texto) { st.textContent = 'Informe seu ID e escreva o comentário.'; return; }
+  st.textContent = 'Enviando…';
+  try {
+    await jsonp({api:'comentario', aluno, id:obraAtual.id_obra_base, texto});
+    st.textContent = 'Comentário enviado para moderação. 💜';
+    document.getElementById('textoCom').value = '';
+  } catch(e) { st.textContent = e.message; }
+}
+
+document.getElementById('buscar').onclick = carregarComunidade;
+document.getElementById('q').addEventListener('keydown', e => { if(e.key==='Enter') carregarComunidade(); });
+document.getElementById('fechar').onclick = () => document.getElementById('modal').classList.remove('aberto');
+document.getElementById('modal').addEventListener('click', e => { if(e.target.id==='modal') e.currentTarget.classList.remove('aberto'); });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+carregarTema();
+carregarAvisos();
+carregarComunidade();
+</script>
 </body>
 </html>
