@@ -11,8 +11,7 @@
     "minimal-ui"
   ],
   "background_color": "#FAF5FF",
-  "theme_color": "#55158D",
-  "orientation": "any",
+  "theme_color": "#5B21B6",
   "icons": [
     {
       "src": "./icon-biblioteca-cemtn-192.png",
