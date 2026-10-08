@@ -1,4 +1,4 @@
-const CACHE = 'biblioteca-cemtn-shell-v1';
+const CACHE = 'biblioteca-cemtn-v13-8';
 const SHELL = [
   './',
   './index.html',
@@ -8,37 +8,29 @@ const SHELL = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(SHELL))
-  );
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE)
-          .map(key => caches.delete(key))
-      )
-    )
+    caches.keys().then(keys => Promise.all(
+      keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+    ))
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-
-  // Só interfere nos arquivos do próprio shell PWA.
-  if (url.origin !== self.location.origin) return;
+  const u = new URL(event.request.url);
+  if (u.origin !== self.location.origin) return;
 
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-        return response;
+      .then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(event.request, copy));
+        return res;
       })
       .catch(() => caches.match(event.request))
   );
