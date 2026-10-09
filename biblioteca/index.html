@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Biblioteca CEMTN">
 <title>Biblioteca CEMTN</title>
+<meta name="cemtn-version" content="13.9">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-biblioteca-cemtn-192.png">
 <link rel="apple-touch-icon" href="./icon-biblioteca-cemtn-512.png">
@@ -159,30 +160,105 @@ let temaAtual = null;
 let obraAtual = null;
 
 function jsonp(params) {
+  /*
+    Ponte sem credenciais:
+    evita que a chamada ao Apps Script herde as várias contas Google
+    já conectadas no navegador.
+  */
   return new Promise((resolve, reject) => {
     const cb = 'cemtn_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error('Tempo de resposta excedido.'));
-    }, 15000);
+    const token = 'ponte_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const qs = new URLSearchParams({...params, callback:cb});
+    const url = API + '?' + qs.toString();
+
+    const frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.setAttribute('aria-hidden', 'true');
+
+    try {
+      frame.credentialless = true;
+      frame.setAttribute('credentialless', '');
+    } catch(e) {}
+
+    let finished = false;
 
     function cleanup() {
-      clearTimeout(timeout);
-      try { delete window[cb]; } catch(e) {}
-      if (script.parentNode) script.parentNode.removeChild(script);
+      if (finished) return;
+      finished = true;
+      window.removeEventListener('message', onMessage);
+      if (frame.parentNode) frame.parentNode.removeChild(frame);
     }
 
-    window[cb] = (data) => {
+    function fail(message) {
       cleanup();
-      if (data && data.ok === false) reject(new Error(data.erro || 'Erro no sistema.'));
-      else resolve(data && Object.prototype.hasOwnProperty.call(data,'dados') ? data.dados : data);
-    };
+      reject(new Error(message || 'Falha de conexão.'));
+    }
 
-    const qs = new URLSearchParams({...params, callback:cb});
-    script.src = API + '?' + qs.toString();
-    script.onerror = () => { cleanup(); reject(new Error('Falha de conexão.')); };
-    document.head.appendChild(script);
+    function onMessage(ev) {
+      if (ev.source !== frame.contentWindow) return;
+      const msg = ev.data || {};
+      if (msg.token !== token) return;
+
+      if (msg.tipo === 'erro') {
+        fail(msg.erro || 'Falha de conexão.');
+        return;
+      }
+
+      if (msg.tipo === 'dados') {
+        const data = msg.data;
+        cleanup();
+
+        if (data && data.ok === false) {
+          reject(new Error(data.erro || 'Erro no sistema.'));
+        } else {
+          resolve(
+            data && Object.prototype.hasOwnProperty.call(data, 'dados')
+              ? data.dados
+              : data
+          );
+        }
+      }
+    }
+
+    window.addEventListener('message', onMessage);
+
+    const bridge = `<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>
+(function(){
+  var token = ${JSON.stringify(token)};
+  var callbackName = ${JSON.stringify(cb)};
+  var apiUrl = ${JSON.stringify(url)};
+
+  window[callbackName] = function(data) {
+    parent.postMessage({
+      tipo: 'dados',
+      token: token,
+      data: data
+    }, '*');
+  };
+
+  var s = document.createElement('script');
+  s.src = apiUrl;
+  s.async = true;
+  s.onerror = function() {
+    parent.postMessage({
+      tipo: 'erro',
+      token: token,
+      erro: 'Falha de conexão.'
+    }, '*');
+  };
+  document.head.appendChild(s);
+})();
+<\/script>
+</body></html>`;
+
+    frame.srcdoc = bridge;
+    document.body.appendChild(frame);
+
+    setTimeout(() => {
+      if (!finished) fail('Tempo de resposta excedido.');
+    }, 15000);
   });
 }
 
