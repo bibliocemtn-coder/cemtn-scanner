@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Biblioteca CEMTN">
 <title>Biblioteca CEMTN</title>
-<meta name="cemtn-version" content="13.9">
+<meta name="cemtn-version" content="13.10">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="./icon-biblioteca-cemtn-192.png">
 <link rel="apple-touch-icon" href="./icon-biblioteca-cemtn-512.png">
@@ -71,6 +71,11 @@ main{max-width:980px;margin:auto;padding:16px}
 .capa{aspect-ratio:2/3;background:linear-gradient(135deg,var(--clara),#fff);display:grid;place-items:center;overflow:hidden}
 .capa img{width:100%;height:100%;object-fit:cover} .semcapa{font-size:42px;opacity:.5}
 .livro-info{padding:11px} .livro-info strong{display:block;font-size:14px;line-height:1.25} .livro-info span{display:block;font-size:12px;opacity:.65;margin-top:4px}
+.autor-linha{display:flex;align-items:center;gap:8px;margin-top:7px}
+.autor-foto{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:0 0 34px;background:var(--clara);border:2px solid #fff;box-shadow:0 2px 8px #0002}
+.autor-foto-grande{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--clara);border:3px solid #fff;box-shadow:0 4px 14px #0002;margin-top:10px}
+.autor-sem-foto{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:0 0 34px;background:var(--clara);font-size:17px}
+
 .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px} .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:var(--clara)}
 .vazio{padding:28px;text-align:center;background:#fff;border-radius:18px;opacity:.7}
 .modal{position:fixed;inset:0;z-index:50;background:#0008;display:none;align-items:flex-end;justify-content:center}
@@ -292,6 +297,16 @@ function capaHtml(url) {
     : '<div class="semcapa">📖</div>';
 }
 
+function autorFotoHtml(url, x, y, grande=false) {
+  const cls = grande ? 'autor-foto-grande' : 'autor-foto';
+  const px = Number.isFinite(Number(x)) ? Number(x) : 50;
+  const py = Number.isFinite(Number(y)) ? Number(y) : 50;
+
+  return url
+    ? '<img class="' + cls + '" src="' + esc(url) + '" alt="" loading="lazy" style="object-position:' + px + '% ' + py + '%">'
+    : (grande ? '' : '<div class="autor-sem-foto">✍️</div>');
+}
+
 async function carregarTema() {
   try { aplicarTema(await jsonp({api:'tema'})); } catch(e) {}
 }
@@ -321,7 +336,10 @@ async function carregarComunidade() {
         <div class="capa">${capaHtml(x.capa_url)}</div>
         <div class="livro-info">
           <strong>${esc(x.titulo)}</strong>
-          <span>${esc(x.autor)}</span>
+          <div class="autor-linha">
+            ${autorFotoHtml(x.autor_foto_url, x.autor_foto_x, x.autor_foto_y)}
+            <span>${esc(x.autor)}</span>
+          </div>
           <div class="badges">
             <span class="badge">${Number(x.disponiveis||0)} disponível(is)</span>
             <span class="badge">❤ ${Number(x.recomendacoes||0)}</span>
@@ -354,6 +372,7 @@ async function abrirDetalhe(id) {
         <div>
           <h2>${esc(x.titulo)}</h2>
           <p>${esc(x.autor)}</p>
+          ${autorFotoHtml(x.autor_foto_url, x.autor_foto_x, x.autor_foto_y, true)}
           <div class="badges">
             <span class="badge">${Number(x.total_disponiveis||0)} disponível(is)</span>
             <span class="badge">❤ ${Number(x.recomendacoes||0)} recomendação(ões)</span>
